@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Class used internally by Text_Diff to actually compute the diffs.
  *
@@ -27,8 +26,7 @@
  * @author  Geoffrey T. Dairiki <dairiki@dairiki.org>
  * @package Text_Diff
  */
-class Text_Diff_Engine_native
-{
+class Text_Diff_Engine_native {
 
     function diff($from_lines, $to_lines)
     {
@@ -54,8 +52,7 @@ class Text_Diff_Engine_native
         }
 
         // Skip trailing common lines.
-        $xi = $n_from;
-        $yi = $n_to;
+        $xi = $n_from; $yi = $n_to;
         for ($endskip = 0; --$xi > $skip && --$yi > $skip; $endskip++) {
             if ($from_lines[$xi] !== $to_lines[$yi]) {
                 break;
@@ -96,15 +93,13 @@ class Text_Diff_Engine_native
         $edits = array();
         $xi = $yi = 0;
         while ($xi < $n_from || $yi < $n_to) {
-            boolval($yi < $n_to || $this->xchanged[$xi]);
-            boolval($xi < $n_from || $this->ychanged[$yi]);
+            assert($yi < $n_to || $this->xchanged[$xi]);
+            assert($xi < $n_from || $this->ychanged[$yi]);
 
             // Skip matching "snake".
             $copy = array();
-            while (
-                $xi < $n_from && $yi < $n_to
-                && !$this->xchanged[$xi] && !$this->ychanged[$yi]
-            ) {
+            while ($xi < $n_from && $yi < $n_to
+                   && !$this->xchanged[$xi] && !$this->ychanged[$yi]) {
                 $copy[] = $from_lines[$xi++];
                 ++$yi;
             }
@@ -151,7 +146,7 @@ class Text_Diff_Engine_native
      * match.  The caller must trim matching lines from the beginning and end
      * of the portions it is going to specify.
      */
-    function _diag($xoff, $xlim, $yoff, $ylim, $nchunks)
+    function _diag ($xoff, $xlim, $yoff, $ylim, $nchunks)
     {
         $flip = false;
 
@@ -159,7 +154,7 @@ class Text_Diff_Engine_native
             /* Things seems faster (I'm not sure I understand why) when the
              * shortest sequence is in X. */
             $flip = true;
-            list($xoff, $xlim, $yoff, $ylim)
+            list ($xoff, $xlim, $yoff, $ylim)
                 = array($yoff, $ylim, $xoff, $xlim);
         }
 
@@ -174,7 +169,7 @@ class Text_Diff_Engine_native
         }
 
         $this->lcs = 0;
-        $this->seq[0] = $yoff - 1;
+        $this->seq[0]= $yoff - 1;
         $this->in_seq = array();
         $ymids[0] = array();
 
@@ -187,7 +182,7 @@ class Text_Diff_Engine_native
                 }
             }
 
-            $x1 = $xoff + (int) (($numer + ($xlim - $xoff) * $chunk) / $nchunks);
+            $x1 = $xoff + (int)(($numer + ($xlim - $xoff) * $chunk) / $nchunks);
             for (; $x < $x1; $x++) {
                 $line = $flip ? $this->yv[$x] : $this->xv[$x];
                 if (empty($ymatches[$line])) {
@@ -198,14 +193,14 @@ class Text_Diff_Engine_native
                 foreach ($matches as $ignore => $y) {
                     if (empty($this->in_seq[$y])) {
                         $k = $this->_lcsPos($y);
-                        boolval($k > 0);
+                        assert($k > 0);
                         $ymids[$k] = $ymids[$k - 1];
                         break;
                     }
                 }
                 foreach ($matches as $ignore => $y) {
                     if ($y > $this->seq[$k - 1]) {
-                        boolval($y <= $this->seq[$k]);
+                        assert($y <= $this->seq[$k]);
                         /* Optimization: this is a common case: next match is
                          * just replacing previous match. */
                         $this->in_seq[$this->seq[$k]] = false;
@@ -213,7 +208,7 @@ class Text_Diff_Engine_native
                         $this->in_seq[$y] = 1;
                     } elseif (empty($this->in_seq[$y])) {
                         $k = $this->_lcsPos($y);
-                        boolval($k > 0);
+                        assert($k > 0);
                         $ymids[$k] = $ymids[$k - 1];
                     }
                 }
@@ -223,7 +218,7 @@ class Text_Diff_Engine_native
         $seps[] = $flip ? array($yoff, $xoff) : array($xoff, $yoff);
         $ymid = $ymids[$this->lcs];
         for ($n = 0; $n < $nchunks - 1; $n++) {
-            $x1 = $xoff + (int) (($numer + ($xlim - $xoff) * $n) / $nchunks);
+            $x1 = $xoff + (int)(($numer + ($xlim - $xoff) * $n) / $nchunks);
             $y1 = $ymid[$n] + 1;
             $seps[] = $flip ? array($y1, $x1) : array($x1, $y1);
         }
@@ -243,7 +238,7 @@ class Text_Diff_Engine_native
 
         $beg = 1;
         while ($beg < $end) {
-            $mid = (int) (($beg + $end) / 2);
+            $mid = (int)(($beg + $end) / 2);
             if ($ypos > $this->seq[$mid]) {
                 $beg = $mid + 1;
             } else {
@@ -251,7 +246,7 @@ class Text_Diff_Engine_native
             }
         }
 
-        boolval($ypos != $this->seq[$end]);
+        assert($ypos != $this->seq[$end]);
 
         $this->in_seq[$this->seq[$end]] = false;
         $this->seq[$end] = $ypos;
@@ -271,22 +266,18 @@ class Text_Diff_Engine_native
      * Note that XLIM, YLIM are exclusive bounds.  All line numbers are
      * origin-0 and discarded lines are not counted.
      */
-    function _compareseq($xoff, $xlim, $yoff, $ylim)
+    function _compareseq ($xoff, $xlim, $yoff, $ylim)
     {
         /* Slide down the bottom initial diagonal. */
-        while (
-            $xoff < $xlim && $yoff < $ylim
-            && $this->xv[$xoff] == $this->yv[$yoff]
-        ) {
+        while ($xoff < $xlim && $yoff < $ylim
+               && $this->xv[$xoff] == $this->yv[$yoff]) {
             ++$xoff;
             ++$yoff;
         }
 
         /* Slide up the top initial diagonal. */
-        while (
-            $xlim > $xoff && $ylim > $yoff
-            && $this->xv[$xlim - 1] == $this->yv[$ylim - 1]
-        ) {
+        while ($xlim > $xoff && $ylim > $yoff
+               && $this->xv[$xlim - 1] == $this->yv[$ylim - 1]) {
             --$xlim;
             --$ylim;
         }
@@ -316,7 +307,7 @@ class Text_Diff_Engine_native
             reset($seps);
             $pt1 = $seps[0];
             while ($pt2 = next($seps)) {
-                $this->_compareseq($pt1[0], $pt2[0], $pt1[1], $pt2[1]);
+                $this->_compareseq ($pt1[0], $pt2[0], $pt1[1], $pt2[1]);
                 $pt1 = $pt2;
             }
         }
@@ -339,7 +330,7 @@ class Text_Diff_Engine_native
         $i = 0;
         $j = 0;
 
-        boolval(count($lines) == count($changed));
+        assert(count($lines) == count($changed));
         $len = count($lines);
         $other_len = count($other_changed);
 
@@ -359,10 +350,9 @@ class Text_Diff_Engine_native
                 $j++;
             }
 
-            while ($i < $len && !$changed[$i]) {
-                boolval($j < $other_len && !$other_changed[$j]);
-                $i++;
-                $j++;
+            while ($i < $len && ! $changed[$i]) {
+                assert($j < $other_len && ! $other_changed[$j]);
+                $i++; $j++;
                 while ($j < $other_len && $other_changed[$j]) {
                     $j++;
                 }
@@ -393,11 +383,11 @@ class Text_Diff_Engine_native
                     while ($start > 0 && $changed[$start - 1]) {
                         $start--;
                     }
-                    boolval($j > 0);
+                    assert($j > 0);
                     while ($other_changed[--$j]) {
                         continue;
                     }
-                    boolval($j >= 0 && !$other_changed[$j]);
+                    assert($j >= 0 && !$other_changed[$j]);
                 }
 
                 /* Set CORRESPONDING to the end of the changed run, at the
@@ -418,7 +408,7 @@ class Text_Diff_Engine_native
                         $i++;
                     }
 
-                    boolval($j < $other_len && !$other_changed[$j]);
+                    assert($j < $other_len && ! $other_changed[$j]);
                     $j++;
                     if ($j < $other_len && $other_changed[$j]) {
                         $corresponding = $i;
@@ -434,12 +424,13 @@ class Text_Diff_Engine_native
             while ($corresponding < $i) {
                 $changed[--$start] = 1;
                 $changed[--$i] = 0;
-                boolval($j > 0);
+                assert($j > 0);
                 while ($other_changed[--$j]) {
                     continue;
                 }
-                boolval($j >= 0 && !$other_changed[$j]);
+                assert($j >= 0 && !$other_changed[$j]);
             }
         }
     }
+
 }
