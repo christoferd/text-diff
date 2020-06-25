@@ -1,0 +1,112 @@
+# Laravel
+bootstrap/compiled.php
+# Only the root vendor folder, not all of them
+vendor/*
+
+# storage folder will contain different domain names for each install
+#storage/*
+storage/cache/*
+storage/debugbar/*
+storage/logs/*
+storage/meta/*
+storage/reports/*
+storage/sessions/*
+storage/uploads/*
+storage/views/*
+storage/downloaded-file.bin
+storage/*.txt
+
+#phpunit
+phpunit.phar
+
+# Composer
+composer.phar
+
+# Packages
+app/_ide_helpers.php
+
+# Numerous always-ignore extensions
+*.diff
+*.err
+*.orig
+*.rej
+*.swo
+*.swp
+*.vi
+*~
+*.sass-cache
+
+# OS or Editor folders
+.idea/
+.DS_Store
+Thumbs.db
+.cache
+.project
+.settings
+.tmproj
+*.esproj
+nbproject
+*.sublime-project
+*.sublime-workspace
+
+# Dreamweaver added files
+_notes
+dwsync.xml
+
+# Komodo
+*.komodoproject
+.komodotools
+
+# Folders to ignore
+.hg
+.svn
+.CVS
+intermediate
+cache
+
+# Compiled source #
+###################
+#!! *.com // Chris D. 30-Mar-2017 REMOVED due to it excluding folders ending in "".com" e.g. /config/staging/stage.example.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.bat
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Backup files
+*~.nib
+\#*#
+.#*
+*.un~
+
+# Logs
+######################
