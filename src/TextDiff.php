@@ -17,7 +17,7 @@ class TextDiff
 	 * @param string $right_string text to compare
 	 * @param bool   $split_view   split into two columns (side by side comparison)
 	 *
-	 * @return string HTML table or empty string.
+	 * @return string HTML on success with differences, blank string when they are identical.
 	 */
 	public static function render($left_string, $right_string, $split_view = true)
 	{
@@ -25,7 +25,7 @@ class TextDiff
 		$renderer  = new WP_Text_Diff_Renderer_Table(['show_split_view' => $split_view]);
 		$diff = $renderer->render($text_diff);
 
-		if (!$diff)
+		if (empty($diff))
 			return '';
 
 		$r  = '<div class="diff">';
