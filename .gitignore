@@ -38,6 +38,7 @@ app/_ide_helpers.php
 
 # OS or Editor folders
 .idea/
+.history/
 .DS_Store
 Thumbs.db
 .cache
