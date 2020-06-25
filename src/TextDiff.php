@@ -25,12 +25,12 @@ class TextDiff
 		$renderer  = new WP_Text_Diff_Renderer_Table(['show_split_view' => $split_view]);
 		$diff = $renderer->render($text_diff);
 
-		if (! $diff)
+		if (!$diff)
 			return '';
 
-		$r  = "<table class='diff'>\n";
-		$r .= "<tbody>\n" . $diff . "\n</tbody>\n";
-		$r .= "</table>";
+		$r  = '<div class="diff">';
+		$r .= PHP_EOL . $diff . PHP_EOL;
+		$r .= '</div>';
 
 		return $r;
 	}
@@ -48,24 +48,24 @@ class TextDiff
 		$left_string  = self::normalize_whitespace($left_string);
 		$right_string = self::normalize_whitespace($right_string);
 
-		$left_lines  = explode("\n", $left_string);
-		$right_lines = explode("\n", $right_string);
+		$left_lines  = explode(PHP_EOL, $left_string);
+		$right_lines = explode(PHP_EOL, $right_string);
 
 		return new Text_Diff($left_lines, $right_lines);
 	}
 
 	/**
-	* Normalize EOL characters and strip duplicate whitespace.
-	*
-	* @param string $str The string to normalize.
-	* @return string The normalized string.
-	*/
+	 * Normalize EOL characters and strip duplicate whitespace.
+	 *
+	 * @param string $str The string to normalize.
+	 * @return string The normalized string.
+	 */
 	protected static function normalize_whitespace($str)
 	{
-	    $str  = trim($str);
-	    $str  = str_replace("\r", "\n", $str);
-	    $str  = preg_replace(['/\n+/', '/[ \t]+/'], ["\n", ' '], $str);
+		$str  = trim($str);
+		$str  = str_replace("\r", PHP_EOL, $str);
+		$str  = preg_replace(['/\n+/', '/[ \t]+/'], [PHP_EOL, ' '], $str);
 
-	    return $str;
+		return $str;
 	}
 }
